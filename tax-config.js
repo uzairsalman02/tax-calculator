@@ -1,0 +1,82 @@
+// Central tax configuration for Pakistan salaried persons.
+// Update this file when future Finance Acts revise slabs, surcharge, or teacher/researcher rebate rules.
+window.TAX_CONFIG = {
+  months: [
+    { key: "jul", label: "July", shortLabel: "Jul" },
+    { key: "aug", label: "August", shortLabel: "Aug" },
+    { key: "sep", label: "September", shortLabel: "Sep" },
+    { key: "oct", label: "October", shortLabel: "Oct" },
+    { key: "nov", label: "November", shortLabel: "Nov" },
+    { key: "dec", label: "December", shortLabel: "Dec" },
+    { key: "jan", label: "January", shortLabel: "Jan" },
+    { key: "feb", label: "February", shortLabel: "Feb" },
+    { key: "mar", label: "March", shortLabel: "Mar" },
+    { key: "apr", label: "April", shortLabel: "Apr" },
+    { key: "may", label: "May", shortLabel: "May" },
+    { key: "jun", label: "June", shortLabel: "Jun" },
+  ],
+  years: {
+    fy2026: {
+      label: "FY 2026-27",
+      taxYear: "Tax Year 2027",
+      source: "Finance Bill 2026, First Schedule, Part I, Division I, clause (2)",
+      surchargeRate: 0,
+      surchargeThreshold: Infinity,
+      teacherResearcherRebate: {
+        available: false,
+        rate: 0,
+        message: "Teacher/Researcher tax rebate is not available for this financial year. Normal salaried slab has been applied.",
+      },
+      slabs: [
+        { min: 0, max: 600000, fixed: 0, rate: 0 },
+        { min: 600000, max: 1200000, fixed: 0, rate: 0.01 },
+        { min: 1200000, max: 2200000, fixed: 6000, rate: 0.11 },
+        { min: 2200000, max: 3200000, fixed: 116000, rate: 0.2 },
+        { min: 3200000, max: 4100000, fixed: 316000, rate: 0.25 },
+        { min: 4100000, max: 5600000, fixed: 541000, rate: 0.29 },
+        { min: 5600000, max: 7000000, fixed: 976000, rate: 0.32 },
+        { min: 7000000, max: Infinity, fixed: 1424000, rate: 0.35 },
+      ],
+    },
+    fy2025: {
+      label: "FY 2025-26",
+      taxYear: "Tax Year 2026",
+      source: "Finance Act 2025 salaried schedule",
+      surchargeRate: 0.09,
+      surchargeThreshold: 10000000,
+      teacherResearcherRebate: {
+        available: false,
+        rate: 0,
+        message: "Teacher/Researcher tax rebate is not available for this financial year. Normal salaried slab has been applied.",
+      },
+      slabs: [
+        { min: 0, max: 600000, fixed: 0, rate: 0 },
+        { min: 600000, max: 1200000, fixed: 0, rate: 0.01 },
+        { min: 1200000, max: 2200000, fixed: 6000, rate: 0.11 },
+        { min: 2200000, max: 3200000, fixed: 116000, rate: 0.23 },
+        { min: 3200000, max: 4100000, fixed: 346000, rate: 0.3 },
+        { min: 4100000, max: Infinity, fixed: 616000, rate: 0.35 },
+      ],
+    },
+    fy2024: {
+      label: "FY 2024-25",
+      taxYear: "Tax Year 2025",
+      source: "Finance Act 2024, First Schedule, Part I, Division I, paragraph (2)",
+      surchargeRate: 0.1,
+      surchargeThreshold: 10000000,
+      teacherResearcherRebate: {
+        available: true,
+        rate: 0.25,
+        message: "Teacher/Researcher rebate of 25% has been applied to calculated tax payable.",
+      },
+      slabs: [
+        { min: 0, max: 600000, fixed: 0, rate: 0 },
+        { min: 600000, max: 1200000, fixed: 0, rate: 0.05 },
+        { min: 1200000, max: 2200000, fixed: 30000, rate: 0.15 },
+        { min: 2200000, max: 3200000, fixed: 180000, rate: 0.25 },
+        { min: 3200000, max: 4100000, fixed: 430000, rate: 0.3 },
+        { min: 4100000, max: Infinity, fixed: 700000, rate: 0.35 },
+      ],
+    },
+  },
+};

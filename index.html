@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pakistan Salary Tax Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Pakistan salaried income tax</p>
+          <h1>Salary Tax Calculator</h1>
+          <p class="subtitle">
+            Gross salary tax, reverse salary estimate, teacher rebate checks, and printable tax certificate.
+          </p>
+        </div>
+
+        <div class="top-actions">
+          <label class="select-label" for="yearSelect">
+            Financial Year
+            <select id="yearSelect">
+              <option value="fy2026">FY 2026-27</option>
+              <option value="fy2025">FY 2025-26</option>
+              <option value="fy2024">FY 2024-25</option>
+            </select>
+          </label>
+
+          <label class="select-label" for="userTypeSelect">
+            User Type
+            <select id="userTypeSelect">
+              <option value="standard">Standard Salaried Person</option>
+              <option value="teacher">Teacher / Researcher</option>
+            </select>
+          </label>
+
+          <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle dark mode">
+            <span aria-hidden="true">◐</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="notice-card" aria-label="Calculator note">
+        <strong>Note:</strong> Tax is calculated on gross taxable salary. Net salary may vary due to
+        deductions and recoveries.
+      </section>
+
+      <nav class="tabs" aria-label="Calculator mode">
+        <button class="tab-button active" type="button" data-tab="salary">Salary to Tax</button>
+        <button class="tab-button" type="button" data-tab="reverse">Reverse Tax</button>
+      </nav>
+
+      <section class="panel-grid active" id="salaryPanel">
+        <article class="card input-card">
+          <div class="card-heading">
+            <div>
+              <p class="section-label">Gross salary</p>
+              <h2>Salary to Tax</h2>
+            </div>
+            <div class="segmented" role="group" aria-label="Salary input period">
+              <button class="segment active" type="button" data-period="monthly">Monthly</button>
+              <button class="segment" type="button" data-period="annual">Annual</button>
+            </div>
+          </div>
+
+          <div class="toggle-line">
+            <span>Salary changed during the year?</span>
+            <div class="segmented compact" role="group" aria-label="Salary changed during year">
+              <button class="change-toggle active" type="button" data-changed="no">No</button>
+              <button class="change-toggle" type="button" data-changed="yes">Yes</button>
+            </div>
+          </div>
+
+          <div id="singleSalaryFields">
+            <label class="field-label" for="salaryInput">
+              <span id="salaryInputLabel">Monthly Gross Salary</span>
+              <input id="salaryInput" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 180,000" />
+            </label>
+            <p class="field-help" id="salaryHelp">Enter gross salary in Pakistani Rupees.</p>
+          </div>
+
+          <div class="period-section hidden" id="periodSalaryFields">
+            <div class="section-row">
+              <div>
+                <p class="section-label">Salary periods</p>
+                <h3>July to June</h3>
+              </div>
+              <button class="soft-button" id="addPeriodRow" type="button">Add Period</button>
+            </div>
+            <div class="period-rows" id="periodRows"></div>
+            <p class="field-help" id="periodHelp">Add one or more gross monthly salary periods.</p>
+          </div>
+        </article>
+
+        <article class="card result-card" aria-live="polite">
+          <div class="card-heading">
+            <div>
+              <p class="section-label">Result</p>
+              <h2>Tax estimate</h2>
+            </div>
+            <div class="button-row">
+              <button class="soft-button" id="copySalaryResult" type="button">Copy</button>
+              <button class="soft-button" id="printSalaryResult" type="button">Print</button>
+              <button class="soft-button" id="pdfSalaryResult" type="button">PDF</button>
+            </div>
+          </div>
+
+          <div class="empty-state" id="salaryEmpty">Enter gross salary to see the tax estimate.</div>
+          <div class="results hidden" id="salaryResults">
+            <div class="metric primary">
+              <span>Final Tax Payable</span>
+              <strong id="annualTax">Rs. 0</strong>
+            </div>
+            <div class="metric-list">
+              <div><span>Annual Gross Salary</span><strong id="grossAnnual">Rs. 0</strong></div>
+              <div><span>Tax Before Rebate</span><strong id="taxBeforeRebate">Rs. 0</strong></div>
+              <div><span>Teacher / Researcher Rebate</span><strong id="teacherRebate">Rs. 0</strong></div>
+              <div><span>Tax Saved</span><strong id="taxSaved">Rs. 0</strong></div>
+              <div><span>Monthly Tax</span><strong id="monthlyTax">Rs. 0</strong></div>
+              <div><span>Net Annual Salary</span><strong id="netAnnual">Rs. 0</strong></div>
+              <div><span>Net Monthly Salary</span><strong id="netMonthly">Rs. 0</strong></div>
+              <div><span>Effective Tax Rate</span><strong id="effectiveRate">0%</strong></div>
+            </div>
+            <div class="message-card hidden" id="salaryRebateMessage"></div>
+            <div class="formula-box">
+              <span>Applicable Tax Slab</span>
+              <strong id="salarySlab">-</strong>
+              <span>Formula</span>
+              <strong id="salaryFormula">-</strong>
+            </div>
+            <details class="calculation-details">
+              <summary>How calculated?</summary>
+              <dl id="salaryHowCalculated"></dl>
+            </details>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel-grid" id="reversePanel">
+        <article class="card input-card">
+          <div class="card-heading">
+            <div>
+              <p class="section-label">Reverse calculator</p>
+              <h2>Tax to Salary</h2>
+            </div>
+          </div>
+
+          <label class="field-label" for="taxInput">
+            Annual Tax Amount
+            <input id="taxInput" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 52,500" />
+          </label>
+          <p class="field-help" id="reverseHelp">This is an estimated reverse calculation based on tax slabs.</p>
+
+          <div class="certificate-card">
+            <div>
+              <p class="section-label">Certificate</p>
+              <h3>Print Tax Certificate</h3>
+            </div>
+            <label class="field-label" for="certificateName">
+              Name
+              <input id="certificateName" type="text" autocomplete="name" placeholder="e.g. Ahmed Khan" />
+            </label>
+            <label class="field-label" for="certificateTax">
+              Annual Tax Paid
+              <input id="certificateTax" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 52,500" />
+            </label>
+            <button class="soft-button" id="printCertificate" type="button">Print Tax Certificate</button>
+            <p class="field-help" id="certificateHelp">Enter annual tax paid, then print a simple certificate.</p>
+          </div>
+        </article>
+
+        <article class="card result-card" aria-live="polite">
+          <div class="card-heading">
+            <div>
+              <p class="section-label">Result</p>
+              <h2>Salary estimate</h2>
+            </div>
+            <div class="button-row">
+              <button class="soft-button" id="copyReverseResult" type="button">Copy</button>
+              <button class="soft-button" id="printReverseResult" type="button">Print</button>
+              <button class="soft-button" id="pdfReverseResult" type="button">PDF</button>
+            </div>
+          </div>
+
+          <div class="empty-state" id="reverseEmpty">Enter annual tax to estimate gross salary.</div>
+          <div class="results hidden" id="reverseResults">
+            <div class="metric primary">
+              <span>Estimated Annual Gross Salary</span>
+              <strong id="estimatedAnnual">Rs. 0</strong>
+            </div>
+            <div class="metric-list">
+              <div><span>Estimated Monthly Gross Salary</span><strong id="estimatedMonthly">Rs. 0</strong></div>
+              <div><span>Tax Before Rebate</span><strong id="reverseTaxBeforeRebate">Rs. 0</strong></div>
+              <div><span>Teacher / Researcher Rebate</span><strong id="reverseTeacherRebate">Rs. 0</strong></div>
+              <div><span>Final Tax Payable</span><strong id="reverseTax">Rs. 0</strong></div>
+              <div><span>Effective Tax Rate</span><strong id="reverseRate">0%</strong></div>
+            </div>
+            <div class="message-card hidden" id="reverseRebateMessage"></div>
+            <div class="formula-box">
+              <span>Applicable Tax Slab</span>
+              <strong id="reverseSlab">-</strong>
+              <span>Formula</span>
+              <strong id="reverseFormula">-</strong>
+            </div>
+            <details class="calculation-details">
+              <summary>How calculated?</summary>
+              <dl id="reverseHowCalculated"></dl>
+            </details>
+          </div>
+        </article>
+      </section>
+
+      <section class="tax-certificate" id="taxCertificate" aria-label="Tax certificate">
+        <p class="eyebrow">Pakistan Salary Tax Calculator</p>
+        <h2>Tax Payment Certificate</h2>
+        <dl>
+          <dt>Name</dt>
+          <dd id="certificatePrintName">Taxpayer</dd>
+          <dt>Financial Year</dt>
+          <dd id="certificatePrintYear">-</dd>
+          <dt>User Type</dt>
+          <dd id="certificatePrintUserType">-</dd>
+          <dt>Estimated Annual Income</dt>
+          <dd id="certificatePrintIncome">Rs. 0</dd>
+          <dt>Tax Before Rebate</dt>
+          <dd id="certificatePrintBeforeRebate">Rs. 0</dd>
+          <dt>Teacher / Researcher Rebate</dt>
+          <dd id="certificatePrintRebate">Rs. 0</dd>
+          <dt>Annual Tax Paid</dt>
+          <dd id="certificatePrintTax">Rs. 0</dd>
+          <dt>Effective Tax Rate</dt>
+          <dd id="certificatePrintRate">0%</dd>
+          <dt>Applicable Tax Slab</dt>
+          <dd id="certificatePrintSlab">-</dd>
+          <dt>Generated On</dt>
+          <dd id="certificatePrintDate">-</dd>
+        </dl>
+        <p>
+          This certificate is generated from user-entered information in the calculator and is intended
+          for personal record keeping.
+        </p>
+        <div class="signature-row">
+          <div>
+            <span></span>
+            <strong>Taxpayer Signature</strong>
+          </div>
+          <div>
+            <span></span>
+            <strong>Authorized Signature</strong>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>
+          Made with <span class="heart" aria-label="love">❤️</span> by <strong>Uzair Salman</strong>
+        </p>
+        <a
+          class="github-star"
+          href="https://github.com/uzairsalman02/tax-calculator"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ⭐ Star on GitHub
+        </a>
+        <span id="copyStatus" role="status" aria-live="polite"></span>
+      </footer>
+    </main>
+
+    <script src="./tax-config.js"></script>
+    <script src="./payroll-validation-data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
